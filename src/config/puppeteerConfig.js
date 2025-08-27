@@ -1,5 +1,4 @@
 const puppeteerConfig = {
-  executablePath: '/usr/bin/chromium',
   launchArgs: [
     '--no-sandbox',
     '--disable-setuid-sandbox',

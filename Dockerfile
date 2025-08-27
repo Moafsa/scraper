@@ -22,7 +22,6 @@ RUN ln -sf /usr/bin/chromium /usr/bin/chromium-browser
 
 # Tell Puppeteer to skip installing Chromium
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
-    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium \
     NODE_ENV=production \
     NODE_OPTIONS="--max-old-space-size=512"
 
