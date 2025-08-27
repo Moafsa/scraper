@@ -81,9 +81,27 @@ app.get('/api/scrape', async (req, res) => {
     console.log(`🚀 Starting scrape for: ${url}`);
     
     // Launch browser with Docker-optimized settings
-    const executablePath = process.env.PUPPETEER_EXECUTABLE_PATH || 
-                          '/usr/bin/chromium' || 
-                          '/usr/bin/chromium-browser';
+    const fs = require('fs');
+    const path = require('path');
+    
+    // Try to find Chromium executable
+    const possiblePaths = [
+      process.env.PUPPETEER_EXECUTABLE_PATH,
+      '/usr/bin/chromium',
+      '/usr/bin/chromium-browser',
+      '/usr/bin/google-chrome',
+      '/usr/bin/google-chrome-stable'
+    ];
+    
+    let executablePath = null;
+    for (const path of possiblePaths) {
+      if (path && fs.existsSync(path)) {
+        executablePath = path;
+        break;
+      }
+    }
+    
+    console.log(`🔍 Using Chromium at: ${executablePath || 'default'}`);
     
     browser = await puppeteer.launch({
       headless: true,
