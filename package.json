@@ -2,11 +2,11 @@
   "name": "web-scraper-api",
   "version": "1.0.0",
   "description": "Serverless web scraping API for Vercel deployment",
-  "main": "api/scrape.js",
+  "main": "server.js",
   "scripts": {
-    "dev": "vercel dev",
+    "dev": "node server.js",
     "build": "echo 'Build completed'",
-    "start": "node api/scrape.js",
+    "start": "node server.js",
     "vercel-build": "echo 'Vercel build completed'",
     "test-local": "node test-local.js",
     "install-browsers": "npx playwright install"
