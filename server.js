@@ -4,6 +4,17 @@ const puppeteer = require('puppeteer');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Add process error handling
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  process.exit(1);
+});
+
 // Middleware
 app.use(express.json());
 
@@ -23,11 +34,23 @@ app.use((req, res, next) => {
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
-  res.json({
-    status: 'OK',
-    message: 'Scraper API is running',
-    timestamp: new Date().toISOString()
-  });
+  try {
+    res.status(200).json({
+      status: 'OK',
+      message: 'Scraper API is running',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      memory: process.memoryUsage(),
+      version: process.version
+    });
+  } catch (error) {
+    console.error('Health check error:', error);
+    res.status(500).json({
+      status: 'ERROR',
+      message: 'Health check failed',
+      error: error.message
+    });
+  }
 });
 
 // Main scraping endpoint
@@ -109,10 +132,12 @@ app.get('/api/scrape', async (req, res) => {
   } catch (error) {
     console.error('❌ Scraping error:', error);
     
+    // Don't crash the server on scraping errors
     res.status(500).json({
       error: 'Failed to scrape the URL',
       message: error.message,
-      url: url
+      url: url,
+      timestamp: new Date().toISOString()
     });
     
   } finally {
