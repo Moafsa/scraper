@@ -1,28 +1,51 @@
 # Use Node.js 18 with Debian Bullseye for better compatibility
 FROM node:18-bullseye
 
-# Install necessary packages for Puppeteer on Debian
+# Install Puppeteer's system-level dependencies, but not Chromium itself.
+# Puppeteer will download a compatible browser version during npm install.
 RUN apt-get update \
     && apt-get install -y \
-    chromium \
-    libnss3 \
-    libatk1.0-0 \
-    libatk-bridge2.0-0 \
-    libcups2 \
-    libdrm2 \
-    libgtk-3-0 \
-    libgbm1 \
+    ca-certificates \
+    fonts-liberation \
     libasound2 \
+    libatk-bridge2.0-0 \
+    libatk1.0-0 \
+    libc6 \
+    libcairo2 \
+    libcups2 \
+    libdbus-1-3 \
+    libexpat1 \
+    libfontconfig1 \
+    libgbm1 \
+    libgcc1 \
+    libglib2.0-0 \
+    libgtk-3-0 \
+    libnspr4 \
+    libnss3 \
+    libpango-1.0-0 \
+    libpangocairo-1.0-0 \
+    libstdc++6 \
+    libx11-6 \
+    libx11-xcb1 \
+    libxcb1 \
+    libxcomposite1 \
+    libxcursor1 \
+    libxdamage1 \
+    libxext6 \
+    libxfixes3 \
+    libxi6 \
+    libxrandr2 \
+    libxrender1 \
+    libxss1 \
+    libxtst6 \
+    lsb-release \
+    wget \
+    xdg-utils \
     --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
-# Create a symbolic link for compatibility with different environments
-# This ensures that if a platform expects 'chromium-browser', it will find our 'chromium' executable
-RUN ln -sf /usr/bin/chromium /usr/bin/chromium-browser
-
-# Tell Puppeteer to skip installing Chromium
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
-    NODE_ENV=production \
+# Set necessary environment variables, but let Puppeteer handle the browser.
+ENV NODE_ENV=production \
     NODE_OPTIONS="--max-old-space-size=512"
 
 # Create app directory
@@ -31,7 +54,7 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
+# Install dependencies (this will now download a compatible Chrome browser)
 RUN npm install --omit=dev && npm cache clean --force
 
 # Copy source code
