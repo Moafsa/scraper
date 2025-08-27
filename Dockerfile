@@ -1,16 +1,20 @@
-# Use Node.js 18 Alpine for smaller image
-FROM node:18-alpine
+# Use Node.js 18 with Debian Bullseye for better compatibility
+FROM node:18-bullseye
 
-# Install necessary packages for Puppeteer
-RUN apk add --no-cache \
+# Install necessary packages for Puppeteer on Debian
+RUN apt-get update \
+    && apt-get install -y \
     chromium \
-    nss \
-    freetype \
-    freetype-dev \
-    harfbuzz \
-    ca-certificates \
-    ttf-freefont \
-    wget
+    libnss3 \
+    libatk1.0-0 \
+    libatk-bridge2.0-0 \
+    libcups2 \
+    libdrm2 \
+    libgtk-3-0 \
+    libgbm1 \
+    libasound2 \
+    --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
 
 # Create a symbolic link for compatibility with different environments
 # This ensures that if a platform expects 'chromium-browser', it will find our 'chromium' executable
