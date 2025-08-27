@@ -81,9 +81,13 @@ app.get('/api/scrape', async (req, res) => {
     console.log(`🚀 Starting scrape for: ${url}`);
     
     // Launch browser with Docker-optimized settings
+    const executablePath = process.env.PUPPETEER_EXECUTABLE_PATH || 
+                          '/usr/bin/chromium' || 
+                          '/usr/bin/chromium-browser';
+    
     browser = await puppeteer.launch({
       headless: true,
-      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium',
+      executablePath: executablePath,
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
