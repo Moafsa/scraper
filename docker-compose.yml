@@ -7,7 +7,6 @@ services:
       - "3003:3000"
     environment:
       - NODE_ENV=production
-      - PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3003/api/health"]

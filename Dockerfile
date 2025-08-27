@@ -12,9 +12,6 @@ RUN apk add --no-cache \
     ttf-freefont \
     wget
 
-# Create symlink for chromium-browser (compatibility)
-RUN ln -sf /usr/bin/chromium /usr/bin/chromium-browser
-
 # Tell Puppeteer to skip installing Chromium
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium \
