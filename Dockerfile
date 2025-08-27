@@ -12,7 +12,7 @@ RUN apk add --no-cache \
     ttf-freefont \
     wget
 
-# Tell Puppeteer to skip installing Chromium. We'll be using the installed package.
+# Tell Puppeteer to skip installing Chromium
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser \
     NODE_ENV=production
@@ -20,24 +20,17 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
 # Create app directory
 WORKDIR /app
 
-# Copy package files first for better caching
+# Copy package files
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install --only=production && npm cache clean --force
+RUN npm install --omit=dev
 
 # Copy source code
 COPY . .
 
-# Remove any nixpacks files that might interfere
-RUN rm -f nixpacks.toml
-
 # Expose port
 EXPOSE 3000
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1
 
 # Start the application
 CMD ["node", "server.js"]
